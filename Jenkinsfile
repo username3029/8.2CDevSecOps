@@ -4,44 +4,61 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from repository
-                git branch: 'main', url: 'https://github.com/your_github_username/8.2CDevSecOps.git'
+                git branch: 'main', url: 'https://github.com/username3029/8.2CDevSecOps.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // If running natively on Windows Jenkins, you can use: bat 'npm install'
-                // If running inside Docker (Linux), use: sh 'npm install'
-                sh 'npm install'
+                script {
+                    if (isUnix()) {
+                        sh 'npm install'
+                    } else {
+                        bat 'npm install'
+                    }
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Allows pipeline to continue despite test failures
-                sh 'npm test || true'
+                script {
+                    if (isUnix()) {
+                        sh 'npm test || true'
+                    } else {
+                        bat 'npm test || exit /b 0'
+                    }
+                }
             }
         }
 
         stage('Generate Coverage Report') {
             steps {
-                // Ensure coverage report exists
-                sh 'npm run coverage || true'
+                script {
+                    if (isUnix()) {
+                        sh 'npm run coverage || true'
+                    } else {
+                        bat 'npm run coverage || exit /b 0'
+                    }
+                }
             }
         }
 
         stage('NPM Audit (Security Scan)') {
             steps {
-                // Runs security scan and outputs known CVEs into the console log
-                sh 'npm audit || true'
+                script {
+                    if (isUnix()) {
+                        sh 'npm audit || true'
+                    } else {
+                        bat 'npm audit || exit /b 0'
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // Part 2 Task 2: Extended Email Plugin notification with attached logs
             emailext (
                 subject: "Build Status [${currentBuild.currentResult}] - Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
@@ -52,7 +69,7 @@ pipeline {
                     <p>View complete build details in Jenkins: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
                 recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'CulpritsRecipientProvider']],
-                to: 'your_email@example.com',
+                to: 'tomar.dev@hotmail.com',
                 attachLog: true,
                 compressLog: true
             )
