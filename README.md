@@ -216,3 +216,4 @@ When the wizard is done, restart the application and run the exploits again to c
 Testing automatic pipeline trigger 
  
 Testing automatic pipeline trigger 
+Testing automatic trigger take 2 
