@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('* * * * *')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,63 +14,40 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'npm install'
-                    } else {
-                        bat 'npm install'
-                    }
-                }
+                bat 'npm install || exit /b 0'
             }
         }
 
         stage('Run Tests') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'npm test || true'
-                    } else {
-                        bat 'npm test || exit /b 0'
-                    }
-                }
+                bat 'npm test || exit /b 0'
             }
         }
 
         stage('Generate Coverage Report') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'npm run coverage || true'
-                    } else {
-                        bat 'npm run coverage || exit /b 0'
-                    }
-                }
+                bat 'npm run coverage || exit /b 0'
             }
         }
 
         stage('NPM Audit (Security Scan)') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh 'npm audit || true'
-                    } else {
-                        bat 'npm audit || exit /b 0'
-                    }
-                }
+                bat 'npm audit || exit /b 0'
             }
         }
     }
 
     post {
         always {
+            // Part 2 Task 2: Extended Email Notifications with log attachments
             emailext (
-                subject: "Build Status [${currentBuild.currentResult}] - Job: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                subject: "Build Status: ${currentBuild.currentResult} - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                    <h2>Build Execution Summary</h2>
-                    <p><b>Job Name:</b> ${env.JOB_NAME}</p>
-                    <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
-                    <p><b>Result:</b> ${currentBuild.currentResult}</p>
-                    <p>View complete build details in Jenkins: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <h3>Build Execution Completed</h3>
+                    <p><b>Status:</b> ${currentBuild.currentResult}</p>
+                    <p><b>Job:</b> ${env.JOB_NAME}</p>
+                    <p><b>Build Number:</b> ${env.BUILD_NUMBER}</p>
+                    <p>View detailed log in Jenkins: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
                 recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'CulpritsRecipientProvider']],
                 to: 'tomar.dev@hotmail.com',
