@@ -218,3 +218,4 @@ Testing automatic pipeline trigger
 Testing automatic pipeline trigger 
 Testing automatic trigger take 2 
 Testing automatic trigger take 3 
+Demo trigger test 
