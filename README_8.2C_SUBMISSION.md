@@ -7,6 +7,7 @@ Everything has been set up in your local folder:
 
 ## 1. Local Repository Status
 - The `nodejs-goof` project has been cloned into `c:\Users\tomar\Downloads\6.1PFINAL\8.2CDevSecOps`.
+- 
 - Both Unix/Docker ([`Jenkinsfile`](file:///c:/Users/tomar/Downloads/6.1PFINAL/8.2CDevSecOps/Jenkinsfile)) and native Windows ([`Jenkinsfile.windows`](file:///c:/Users/tomar/Downloads/6.1PFINAL/8.2CDevSecOps/Jenkinsfile.windows)) pipeline files have been created and committed locally.
 
 ---
